@@ -1,0 +1,539 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>X Tweet Mockup - Combined Annotations - Andrew Tate</title>
+    <style>
+        /* Base styles */
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif;
+            background-color: #000;
+            color: #fff;
+            margin: 0;
+            padding: 20px;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            min-height: 100vh;
+        }
+        
+        .tweet-container {
+            max-width: 600px;
+            width: 100%;
+            border: 1px solid #2f3336;
+            border-radius: 16px;
+            padding: 16px;
+            background-color: #000;
+            position: relative;
+        }
+        
+        .tweet-header {
+            display: flex;
+            align-items: center;
+            margin-bottom: 12px;
+        }
+        
+        .avatar {
+            width: 40px;
+            height: 40px;
+            border-radius: 50%;
+            margin-right: 12px;
+            background-image: url('https://pbs.twimg.com/profile_images/1887763323464146945/5HdM0_7C_x96.jpg');
+            background-size: cover;
+            background-position: center;
+        }
+        
+        .user-info { flex: 1; }
+        
+        .user-name {
+            font-weight: 700;
+            font-size: 15px;
+            color: #fff;
+            display: flex;
+            align-items: center;
+            gap: 4px;
+        }
+        
+        .verified-badge {
+            width: 18px;
+            height: 18px;
+            fill: #1d9bf0;
+        }
+        
+        .user-handle, .timestamp, .views-count {
+            font-size: 15px;
+            color: #71767b;
+            margin-left: 4px;
+        }
+        
+        .subscribe-button {
+            background-color: #0f1419;
+            border: none;
+            color: #fff;
+            cursor: pointer;
+            padding: 8px 16px;
+            border-radius: 20px;
+            font-size: 14px;
+            font-weight: 600;
+            margin-right: 8px;
+        }
+        
+        .tweet-text {
+            font-size: 15px;
+            line-height: 20px;
+            color: #fff;
+            margin-bottom: 12px;
+        }
+
+        /* Combined annotation styles */
+        .problematic-text {
+            position: relative;
+            display: inline;
+            cursor: pointer;
+            border-bottom: 2px dotted #ff4444;
+            filter: blur(1px);
+            background: rgba(255, 68, 68, 0.1);
+            padding: 1px 3px;
+            border-radius: 3px;
+            transition: all 0.3s ease;
+        }
+
+        .problematic-text:hover {
+            filter: blur(0);
+            background: rgba(255, 68, 68, 0.2);
+        }
+
+        .annotation-badge {
+            position: absolute;
+            top: -8px;
+            right: -8px;
+            background: #ff4444;
+            color: white;
+            border-radius: 50%;
+            width: 16px;
+            height: 16px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 10px;
+            font-weight: bold;
+            z-index: 10;
+            animation: pulse 2s infinite;
+        }
+
+        @keyframes pulse {
+            0% { transform: scale(1); }
+            50% { transform: scale(1.1); }
+            100% { transform: scale(1); }
+        }
+
+        .tooltip {
+            position: absolute;
+            background: #1a1a1a;
+            border: 1px solid #ff4444;
+            border-radius: 8px;
+            padding: 12px;
+            max-width: 300px;
+            z-index: 1000;
+            box-shadow: 0 4px 12px rgba(0, 0, 0, 0.5);
+            opacity: 0;
+            visibility: hidden;
+            transform: translateY(-10px);
+            transition: all 0.3s ease;
+            pointer-events: none;
+        }
+
+        .tooltip.show {
+            opacity: 1;
+            visibility: visible;
+            transform: translateY(0);
+        }
+
+        .tooltip-header {
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            margin-bottom: 8px;
+        }
+
+        .tooltip-icon {
+            width: 16px;
+            height: 16px;
+            fill: #ff4444;
+        }
+
+        .tooltip-title {
+            color: #ff4444;
+            font-weight: bold;
+            font-size: 13px;
+        }
+
+        .tooltip-content {
+            color: #fff;
+            font-size: 12px;
+            line-height: 1.4;
+        }
+
+        .warning-header {
+            background: linear-gradient(135deg, #ff4444, #ff6666);
+            color: white;
+            padding: 12px 16px;
+            border-radius: 8px;
+            margin-bottom: 16px;
+            display: flex;
+            align-items: center;
+            gap: 12px;
+            font-size: 14px;
+        }
+
+        .warning-icon {
+            width: 20px;
+            height: 20px;
+            fill: currentColor;
+        }
+
+        .overlay {
+            position: absolute;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            background: rgba(0, 0, 0, 0.9);
+            border-radius: 16px;
+            z-index: 100;
+            display: none;
+            align-items: center;
+            justify-content: center;
+            padding: 20px;
+        }
+
+        .overlay.show {
+            display: flex;
+        }
+
+        .overlay-content {
+            background: #1a1a1a;
+            border: 2px solid #ff4444;
+            border-radius: 12px;
+            padding: 20px;
+            max-width: 400px;
+            text-align: center;
+        }
+
+        .overlay-title {
+            color: #ff4444;
+            font-weight: bold;
+            font-size: 18px;
+            margin-bottom: 12px;
+        }
+
+        .overlay-description {
+            color: #fff;
+            font-size: 14px;
+            line-height: 1.5;
+            margin-bottom: 16px;
+        }
+
+        .button {
+            padding: 8px 16px;
+            border-radius: 6px;
+            border: none;
+            cursor: pointer;
+            font-size: 14px;
+            font-weight: 600;
+            margin: 0 4px;
+            transition: all 0.2s;
+        }
+
+        .button.primary {
+            background: #ff4444;
+            color: white;
+        }
+
+        .button.primary:hover {
+            background: #ff6666;
+        }
+
+        .button.secondary {
+            background: transparent;
+            color: #71767b;
+            border: 1px solid #71767b;
+        }
+
+        .controls {
+            display: flex;
+            gap: 12px;
+            justify-content: center;
+            margin-top: 16px;
+        }
+    </style>
+</head>
+<body>
+    <div class="tweet-container">
+        <div class="warning-header">
+            <svg class="warning-icon" viewBox="0 0 24 24">
+                <path d="M12 2L1 21h22L12 2zm0 3.99L19.53 19H4.47L12 5.99zM11 16h2v2h-2v-2zm0-6h2v4h-2v-4z"/>
+            </svg>
+            Multiple issues detected - Misogynistic and inflammatory content blurred for review
+        </div>
+
+        <div class="tweet-header">
+            <div class="avatar"></div>
+            <div class="user-info">
+                <div class="user-name">
+                    Andrew Tate
+                    <svg class="verified-badge" viewBox="0 0 22 22">
+                        <path d="M20.396 11c-.018-.646-.215-1.275-.57-1.816-.354-.54-.852-.972-1.438-1.246.223-.607.27-1.264.14-1.897-.131-.634-.437-1.218-.882-1.687-.47-.445-1.053-.75-1.687-.882-.633-.13-1.29-.083-1.897.14-.273-.587-.704-1.086-1.245-1.44S11.647 1.62 11 1.604c-.646.017-1.273.213-1.813.568s-.969.854-1.24 1.44c-.608-.223-1.267-.272-1.902-.14-.635.13-1.22.436-1.69.882-.445.47-.749 1.055-.878 1.688-.13.633-.08 1.29.144 1.896-.587.274-1.087.705-1.443 1.245-.356.54-.555 1.17-.574 1.817.02.647.218 1.276.574 1.817.356.54.856.972 1.443 1.245-.224.606-.274 1.263-.144 1.896.13.634.433 1.218.877 1.688.47.443 1.054.747 1.687.878.633.132 1.29.084 1.897-.136.274.586.705 1.084 1.246 1.439.54.354 1.17.551 1.816.569.647-.016 1.276-.213 1.817-.567s.972-.854 1.245-1.44c.604.239 1.266.296 1.903.164.636-.132 1.22-.447 1.68-.907.46-.46.776-1.044.908-1.681s.075-1.299-.165-1.903c.586-.274 1.084-.705 1.439-1.246.354-.54.551-1.17.569-1.816zM9.662 14.85l-3.429-3.428 1.293-1.302 2.072 2.072 4.4-4.794 1.347 1.246z"></path>
+                    </svg>
+                </div>
+                <div>
+                    <span class="user-handle">@Cobratate</span>
+                    <span class="timestamp">· 11:59 AM · Sep 10, 2025</span>
+                    <span class="views-count">· 1.2M Views</span>
+                </div>
+            </div>
+        </div>
+        
+        <div class="tweet-text">
+            <span class="problematic-text" data-annotation="misogynistic">
+                Stop letting women vote, stop giving women position as judges, stop giving women political appointments.
+                <span class="annotation-badge">!</span>
+                <div class="tooltip">
+                    <div class="tooltip-header">
+                        <svg class="tooltip-icon" viewBox="0 0 24 24">
+                            <path d="M12 2L1 21h22L12 2zm0 3.99L19.53 19H4.47L12 5.99zM11 16h2v2h-2v-2zm0-6h2v4h-2v-4z"/>
+                        </svg>
+                        <span class="tooltip-title">Misogynistic Content</span>
+                    </div>
+                    <div class="tooltip-content">
+                        Advocates for removing women's voting rights and political participation.
+                    </div>
+                </div>
+            </span><br><br>
+            <span class="problematic-text" data-annotation="inflammatory">
+                As soon as only men run government and law, all the problems disappear.
+                <span class="annotation-badge">!</span>
+                <div class="tooltip">
+                    <div class="tooltip-header">
+                        <svg class="tooltip-icon" viewBox="0 0 24 24">
+                            <path d="M12 2C6.48 2 2 6.48 2 12s4.48 10 10 10 10-4.48 10-10S17.52 2 12 2zm-2 15l-5-5 1.41-1.41L10 14.17l7.59-7.59L19 8l-9 9z"/>
+                        </svg>
+                        <span class="tooltip-title">Inflammatory Language</span>
+                    </div>
+                    <div class="tooltip-content">
+                        Uses divisive language that may contribute to polarization.
+                    </div>
+                </div>
+            </span><br><br>
+            <span class="problematic-text" data-annotation="misogynistic">
+                Women now understand that without male protection theyre nothing but victims. You are not a girl boss.
+                <span class="annotation-badge">!</span>
+                <div class="tooltip">
+                    <div class="tooltip-header">
+                        <svg class="tooltip-icon" viewBox="0 0 24 24">
+                            <path d="M12 2L1 21h22L12 2zm0 3.99L19.53 19H4.47L12 5.99zM11 16h2v2h-2v-2zm0-6h2v4h-2v-4z"/>
+                        </svg>
+                        <span class="tooltip-title">Misogynistic Content</span>
+                    </div>
+                    <div class="tooltip-content">
+                        Promotes harmful stereotypes about women's capabilities and independence.
+                    </div>
+                </div>
+            </span><br><br>
+            <span class="problematic-text" data-annotation="inflammatory">
+                There is no such thing.
+                <span class="annotation-badge">!</span>
+                <div class="tooltip">
+                    <div class="tooltip-header">
+                        <svg class="tooltip-icon" viewBox="0 0 24 24">
+                            <path d="M12 2C6.48 2 2 6.48 2 12s4.48 10 10 10 10-4.48 10-10S17.52 2 12 2zm-2 15l-5-5 1.41-1.41L10 14.17l7.59-7.59L19 8l-9 9z"/>
+                        </svg>
+                        <span class="tooltip-title">Inflammatory Language</span>
+                    </div>
+                    <div class="tooltip-content">
+                        Dismissive language that undermines women's achievements.
+                    </div>
+                </div>
+            </span><br><br>
+            <span class="problematic-text" data-annotation="inflammatory">
+                Crying for Iryana is a wake up call for females.
+                <span class="annotation-badge">!</span>
+                <div class="tooltip">
+                    <div class="tooltip-header">
+                        <svg class="tooltip-icon" viewBox="0 0 24 24">
+                            <path d="M12 2C6.48 2 2 6.48 2 12s4.48 10 10 10 10-4.48 10-10S17.52 2 12 2zm-2 15l-5-5 1.41-1.41L10 14.17l7.59-7.59L19 8l-9 9z"/>
+                        </svg>
+                        <span class="tooltip-title">Inflammatory Language</span>
+                    </div>
+                    <div class="tooltip-content">
+                        Uses a tragic event to make broad generalizations about women.
+                    </div>
+                </div>
+            </span><br><br>
+            <span class="problematic-text" data-annotation="inflammatory">
+                GOOD.
+                <span class="annotation-badge">!</span>
+                <div class="tooltip">
+                    <div class="tooltip-header">
+                        <svg class="tooltip-icon" viewBox="0 0 24 24">
+                            <path d="M12 2C6.48 2 2 6.48 2 12s4.48 10 10 10 10-4.48 10-10S17.52 2 12 2zm-2 15l-5-5 1.41-1.41L10 14.17l7.59-7.59L19 8l-9 9z"/>
+                        </svg>
+                        <span class="tooltip-title">Inflammatory Language</span>
+                    </div>
+                    <div class="tooltip-content">
+                        Celebrates harm to women as a positive outcome.
+                    </div>
+                </div>
+            </span><br><br>
+            <span class="problematic-text" data-annotation="inflammatory">
+                WOMEN:
+                <span class="annotation-badge">!</span>
+                <div class="tooltip">
+                    <div class="tooltip-header">
+                        <svg class="tooltip-icon" viewBox="0 0 24 24">
+                            <path d="M12 2C6.48 2 2 6.48 2 12s4.48 10 10 10 10-4.48 10-10S17.52 2 12 2zm-2 15l-5-5 1.41-1.41L10 14.17l7.59-7.59L19 8l-9 9z"/>
+                        </svg>
+                        <span class="tooltip-title">Inflammatory Language</span>
+                    </div>
+                    <div class="tooltip-content">
+                        Aggressive, commanding tone directed at women.
+                    </div>
+                </div>
+            </span><br><br>
+            <span class="problematic-text" data-annotation="misogynistic">
+                giving you political and societal power is how we ended up here.
+                <span class="annotation-badge">!</span>
+                <div class="tooltip">
+                    <div class="tooltip-header">
+                        <svg class="tooltip-icon" viewBox="0 0 24 24">
+                            <path d="M12 2L1 21h22L12 2zm0 3.99L19.53 19H4.47L12 5.99zM11 16h2v2h-2v-2zm0-6h2v4h-2v-4z"/>
+                        </svg>
+                        <span class="tooltip-title">Misogynistic Content</span>
+                    </div>
+                    <div class="tooltip-content">
+                        Blames women's political participation for societal problems.
+                    </div>
+                </div>
+            </span><br><br>
+            <span class="problematic-text" data-annotation="inflammatory">
+                Liberalism is just girl feels.
+                <span class="annotation-badge">!</span>
+                <div class="tooltip">
+                    <div class="tooltip-header">
+                        <svg class="tooltip-icon" viewBox="0 0 24 24">
+                            <path d="M12 2C6.48 2 2 6.48 2 12s4.48 10 10 10 10-4.48 10-10S17.52 2 12 2zm-2 15l-5-5 1.41-1.41L10 14.17l7.59-7.59L19 8l-9 9z"/>
+                        </svg>
+                        <span class="tooltip-title">Inflammatory Language</span>
+                    </div>
+                    <div class="tooltip-content">
+                        Dismisses political ideology as emotional rather than rational.
+                    </div>
+                </div>
+            </span><br><br>
+            <span class="problematic-text" data-annotation="misogynistic">
+                If you really care about womens safety, drop all female ego and obey men.
+                <span class="annotation-badge">!</span>
+                <div class="tooltip">
+                    <div class="tooltip-header">
+                        <svg class="tooltip-icon" viewBox="0 0 24 24">
+                            <path d="M12 2L1 21h22L12 2zm0 3.99L19.53 19H4.47L12 5.99zM11 16h2v2h-2v-2zm0-6h2v4h-2v-4z"/>
+                        </svg>
+                        <span class="tooltip-title">Misogynistic Content</span>
+                    </div>
+                    <div class="tooltip-content">
+                        Advocates for women to submit to male authority and abandon autonomy.
+                    </div>
+                </div>
+            </span><br><br>
+            <span class="problematic-text" data-annotation="inflammatory">
+                We built you a safe society, you ruined it with ego, we will build it again.
+                <span class="annotation-badge">!</span>
+                <div class="tooltip">
+                    <div class="tooltip-header">
+                        <svg class="tooltip-icon" viewBox="0 0 24 24">
+                            <path d="M12 2C6.48 2 2 6.48 2 12s4.48 10 10 10 10-4.48 10-10S17.52 2 12 2zm-2 15l-5-5 1.41-1.41L10 14.17l7.59-7.59L19 8l-9 9z"/>
+                        </svg>
+                        <span class="tooltip-title">Inflammatory Language</span>
+                    </div>
+                    <div class="tooltip-content">
+                        Claims men built society and women destroyed it through ambition.
+                    </div>
+                </div>
+            </span><br><br>
+            <span class="problematic-text" data-annotation="inflammatory">
+                Obey.
+                <span class="annotation-badge">!</span>
+                <div class="tooltip">
+                    <div class="tooltip-header">
+                        <svg class="tooltip-icon" viewBox="0 0 24 24">
+                            <path d="M12 2C6.48 2 2 6.48 2 12s4.48 10 10 10 10-4.48 10-10S17.52 2 12 2zm-2 15l-5-5 1.41-1.41L10 14.17l7.59-7.59L19 8l-9 9z"/>
+                        </svg>
+                        <span class="tooltip-title">Inflammatory Language</span>
+                    </div>
+                    <div class="tooltip-content">
+                        Demands submission from women as a final command.
+                    </div>
+                </div>
+            </span>
+        </div>
+
+        <div class="controls">
+            <button class="button secondary" onclick="showOverlay()">View Issues</button>
+            <button class="button primary" onclick="unblurAll()">Clear Content</button>
+        </div>
+
+        <div class="overlay" id="overlay">
+            <div class="overlay-content">
+                <div class="overlay-title">⚠️ Content Warning</div>
+                <div class="overlay-description">
+                    This tweet contains multiple problematic elements including misinformation, 
+                    inflammatory language, and political attacks. Proceed with caution.
+                </div>
+                <button class="button primary" onclick="hideOverlay()">I Understand</button>
+                <button class="button secondary" onclick="reportContent()">Report Tweet</button>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        function unblurAll() {
+            document.querySelectorAll('.problematic-text').forEach(el => {
+                el.style.filter = 'none';
+                el.style.background = 'rgba(255, 68, 68, 0.1)';
+            });
+        }
+
+        function showOverlay() {
+            document.getElementById('overlay').classList.add('show');
+        }
+
+        function hideOverlay() {
+            document.getElementById('overlay').classList.remove('show');
+        }
+
+        function reportContent() {
+            alert('Content reported. Thank you for your feedback.');
+            hideOverlay();
+        }
+
+        // Tooltip functionality
+        document.querySelectorAll('.problematic-text').forEach(element => {
+            let tooltip = element.querySelector('.tooltip');
+            let timeout;
+
+            element.addEventListener('mouseenter', function() {
+                clearTimeout(timeout);
+                document.querySelectorAll('.tooltip').forEach(t => t.classList.remove('show'));
+                tooltip.classList.add('show');
+            });
+
+            element.addEventListener('mouseleave', function() {
+                timeout = setTimeout(() => {
+                    tooltip.classList.remove('show');
+                }, 100);
+            });
+        });
+    </script>
+</body>
+</html>

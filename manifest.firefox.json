@@ -1,0 +1,23 @@
+{
+  "manifest_version": 2,
+  "name": "Support Buddy",
+  "version": "1.0",
+  "permissions": ["storage", "tabs", "activeTab"],
+  "background": {
+    "scripts": ["background.js"]
+  },
+  "content_scripts": [{
+    "matches": ["https://x.com/*"],
+    "js": ["content.js"],
+    "run_at": "document_idle"
+  }],
+  "browser_action": {
+    "default_popup": "popup.html"
+  },
+  "browser_specific_settings": {
+    "gecko": {
+      "id": "content-filter@supportbuddy.org"
+    }
+  }
+}
+

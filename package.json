@@ -1,0 +1,31 @@
+{
+  "name": "support-buddy",
+  "version": "1.0.0",
+  "description": "Support Buddy Content Filter - Chrome/Firefox Extension with Dual Build",
+  "type": "module",
+  "scripts": {
+    "build": "vite build",
+    "build:chrome": "cross-env TARGET=chrome npm run build",
+    "build:firefox": "cross-env TARGET=firefox npm run build",
+    "dev": "concurrently \"vite build --watch\"",
+    "dev:chrome": "concurrently \"vite build --watch\"",
+    "dev:firefox": "concurrently \"npm run build:firefox --watch\" \"web-ext run --source-dir dist/firefox --firefox=\\\"C:\\\\Program Files\\\\Zen Browser\\\\zen.exe\\\"\""
+  },
+  "devDependencies": {
+    "cross-env": "^7.0.3",
+    "vite": "^5.0.0",
+    "web-ext": "^8.9.0"
+  },
+  "keywords": [
+    "browser-extension",
+    "chrome",
+    "firefox",
+    "Support Buddy",
+    "content-filter"
+  ],
+  "author": "",
+  "license": "MIT",
+  "dependencies": {
+    "concurrently": "^9.2.1"
+  }
+}

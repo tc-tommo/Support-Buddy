@@ -1,0 +1,559 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>X Tweet Mockup - Tooltip Annotations - Andrew Tate</title>
+    <style>
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif;
+            background-color: #000;
+            color: #fff;
+            margin: 0;
+            padding: 20px;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            min-height: 100vh;
+        }
+        
+        .tweet-container {
+            max-width: 600px;
+            width: 100%;
+            border: 1px solid #2f3336;
+            border-radius: 16px;
+            padding: 16px;
+            background-color: #000;
+            position: relative;
+        }
+        
+        .tweet-header {
+            display: flex;
+            align-items: center;
+            margin-bottom: 12px;
+        }
+        
+        .avatar {
+            width: 40px;
+            height: 40px;
+            border-radius: 50%;
+            margin-right: 12px;
+            background-image: url('https://pbs.twimg.com/profile_images/1887763323464146945/5HdM0_7C_x96.jpg');
+            background-size: cover;
+            background-position: center;
+        }
+        
+        .user-info {
+            flex: 1;
+        }
+        
+        .user-name {
+            font-weight: 700;
+            font-size: 15px;
+            color: #fff;
+            display: flex;
+            align-items: center;
+            gap: 4px;
+        }
+        
+        .verified-badge {
+            width: 18px;
+            height: 18px;
+            fill: #1d9bf0;
+        }
+        
+        .user-handle {
+            font-size: 15px;
+            color: #71767b;
+            margin-left: 4px;
+        }
+        
+        .timestamp {
+            font-size: 15px;
+            color: #71767b;
+            margin-left: 4px;
+        }
+        
+        .tweet-actions {
+            display: flex;
+            justify-content: space-between;
+            margin-top: 12px;
+            padding-top: 12px;
+            border-top: 1px solid #2f3336;
+        }
+        
+        .action-button {
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            background: none;
+            border: none;
+            color: #71767b;
+            font-size: 13px;
+            cursor: pointer;
+            padding: 8px;
+            border-radius: 20px;
+            transition: background-color 0.2s;
+        }
+        
+        .action-button:hover {
+            background-color: rgba(29, 155, 240, 0.1);
+        }
+        
+        .action-icon {
+            width: 18px;
+            height: 18px;
+            fill: currentColor;
+        }
+        
+        .tweet-text {
+            font-size: 15px;
+            line-height: 20px;
+            color: #fff;
+            margin-bottom: 12px;
+            position: relative;
+        }
+        
+        .grok-button {
+            background: none;
+            border: none;
+            color: #71767b;
+            cursor: pointer;
+            padding: 8px;
+            border-radius: 20px;
+            margin-right: auto;
+        }
+        
+        .more-button {
+            background: none;
+            border: none;
+            color: #71767b;
+            cursor: pointer;
+            padding: 8px;
+            border-radius: 20px;
+        }
+        
+        .tweet-header-actions {
+            display: flex;
+            align-items: center;
+            gap: 8px;
+        }
+
+        /* Tooltip annotation styles */
+        .problematic-text {
+            position: relative;
+            display: inline;
+            cursor: help;
+            border-bottom: 2px dotted #ff4444;
+            color: #ff6666;
+            transition: all 0.3s ease;
+        }
+
+        .problematic-text:hover {
+            color: #ff8888;
+            border-bottom-color: #ff8888;
+        }
+
+        .tooltip {
+            position: absolute;
+            background: #1a1a1a;
+            border: 1px solid #ff4444;
+            border-radius: 8px;
+            padding: 12px;
+            max-width: 280px;
+            z-index: 1000;
+            box-shadow: 0 4px 12px rgba(0, 0, 0, 0.5);
+            opacity: 0;
+            visibility: hidden;
+            transform: translateY(-10px);
+            transition: all 0.3s ease;
+            pointer-events: none;
+        }
+
+        .tooltip.show {
+            opacity: 1;
+            visibility: visible;
+            transform: translateY(0);
+        }
+
+        .tooltip::before {
+            content: '';
+            position: absolute;
+            top: 100%;
+            left: 50%;
+            transform: translateX(-50%);
+            border: 6px solid transparent;
+            border-top-color: #ff4444;
+        }
+
+        .tooltip::after {
+            content: '';
+            position: absolute;
+            top: 100%;
+            left: 50%;
+            transform: translateX(-50%);
+            border: 5px solid transparent;
+            border-top-color: #1a1a1a;
+            margin-top: -1px;
+        }
+
+        .tooltip-header {
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            margin-bottom: 8px;
+        }
+
+        .tooltip-icon {
+            width: 16px;
+            height: 16px;
+            fill: #ff4444;
+        }
+
+        .tooltip-title {
+            color: #ff4444;
+            font-weight: bold;
+            font-size: 13px;
+        }
+
+        .tooltip-content {
+            color: #fff;
+            font-size: 12px;
+            line-height: 1.4;
+            margin-bottom: 8px;
+        }
+
+        .tooltip-actions {
+            display: flex;
+            gap: 8px;
+            justify-content: flex-end;
+        }
+
+        .tooltip-button {
+            padding: 4px 8px;
+            border-radius: 4px;
+            border: none;
+            cursor: pointer;
+            font-size: 11px;
+            font-weight: 600;
+            transition: all 0.2s;
+        }
+
+        .tooltip-button.primary {
+            background: #ff4444;
+            color: white;
+        }
+
+        .tooltip-button.primary:hover {
+            background: #ff6666;
+        }
+
+        .tooltip-button.secondary {
+            background: transparent;
+            color: #71767b;
+            border: 1px solid #71767b;
+        }
+
+        .tooltip-button.secondary:hover {
+            background: #71767b;
+            color: white;
+        }
+
+        .annotation-badge {
+            position: absolute;
+            top: -8px;
+            right: -8px;
+            background: #ff4444;
+            color: white;
+            border-radius: 50%;
+            width: 14px;
+            height: 14px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 9px;
+            font-weight: bold;
+            z-index: 10;
+            cursor: help;
+        }
+
+        .severity-indicator {
+            display: inline-block;
+            width: 8px;
+            height: 8px;
+            border-radius: 50%;
+            margin-right: 6px;
+        }
+
+        .severity-high {
+            background: #ff4444;
+        }
+
+        .severity-medium {
+            background: #ffa500;
+        }
+
+        .severity-low {
+            background: #ffd700;
+        }
+
+        .info-banner {
+            background: rgba(29, 155, 240, 0.1);
+            border: 1px solid rgba(29, 155, 240, 0.3);
+            border-radius: 6px;
+            padding: 8px 12px;
+            margin-bottom: 12px;
+            font-size: 13px;
+            color: #1d9bf0;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+        }
+
+        .info-icon {
+            width: 16px;
+            height: 16px;
+            fill: currentColor;
+        }
+
+        .tooltip-stats {
+            display: flex;
+            gap: 12px;
+            margin-top: 8px;
+            padding-top: 8px;
+            border-top: 1px solid #333;
+        }
+
+        .stat {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            font-size: 10px;
+        }
+
+        .stat-value {
+            font-weight: bold;
+            color: #ff4444;
+        }
+
+        .stat-label {
+            color: #71767b;
+        }
+    </style>
+</head>
+<body>
+    <div class="tweet-container">
+        <!-- Info Banner -->
+        <div class="info-banner">
+            <svg class="info-icon" viewBox="0 0 24 24">
+                <path d="M12 2C6.48 2 2 6.48 2 12s4.48 10 10 10 10-4.48 10-10S17.52 2 12 2zm1 15h-2v-6h2v6zm0-8h-2V7h2v2z"/>
+            </svg>
+            Hover over highlighted text for detailed explanations
+        </div>
+
+        <div class="tweet-header">
+            <div class="avatar"></div>
+            <div class="user-info">
+                <div class="user-name">
+                    Andrew Tate
+                    <svg class="verified-badge" viewBox="0 0 22 22">
+                        <path d="M20.396 11c-.018-.646-.215-1.275-.57-1.816-.354-.54-.852-.972-1.438-1.246.223-.607.27-1.264.14-1.897-.131-.634-.437-1.218-.882-1.687-.47-.445-1.053-.75-1.687-.882-.633-.13-1.29-.083-1.897.14-.273-.587-.704-1.086-1.245-1.44S11.647 1.62 11 1.604c-.646.017-1.273.213-1.813.568s-.969.854-1.24 1.44c-.608-.223-1.267-.272-1.902-.14-.635.13-1.22.436-1.69.882-.445.47-.749 1.055-.878 1.688-.13.633-.08 1.29.144 1.896-.587.274-1.087.705-1.443 1.245-.356.54-.555 1.17-.574 1.817.02.647.218 1.276.574 1.817.356.54.856.972 1.443 1.245-.224.606-.274 1.263-.144 1.896.13.634.433 1.218.877 1.688.47.443 1.054.747 1.687.878.633.132 1.29.084 1.897-.136.274.586.705 1.084 1.246 1.439.54.354 1.17.551 1.816.569.647-.016 1.276-.213 1.817-.567s.972-.854 1.245-1.44c.604.239 1.266.296 1.903.164.636-.132 1.22-.447 1.68-.907.46-.46.776-1.044.908-1.681s.075-1.299-.165-1.903c.586-.274 1.084-.705 1.439-1.246.354-.54.551-1.17.569-1.816zM9.662 14.85l-3.429-3.428 1.293-1.302 2.072 2.072 4.4-4.794 1.347 1.246z"></path>
+                    </svg>
+                </div>
+                <div>
+                    <span class="user-handle">@Cobratate</span>
+                    <span class="timestamp">· 11:59 AM · Sep 10, 2025</span>
+                    <span class="views-count">· 1.2M Views</span>
+                </div>
+            </div>
+            <div class="tweet-header-actions">
+                <button class="grok-button" aria-label="Grok actions">
+                    <svg width="18" height="18" viewBox="0 0 33 32">
+                        <path d="M12.745 20.54l10.97-8.19c.539-.4 1.307-.244 1.564.38 1.349 3.288.746 7.241-1.938 9.955-2.683 2.714-6.417 3.31-9.83 1.954l-3.728 1.745c5.347 3.697 11.84 2.782 15.898-1.324 3.219-3.255 4.216-7.692 3.284-11.693l.008.009c-1.351-5.878.332-8.227 3.782-13.031L33 0l-4.54 4.59v-.014L12.743 20.544m-2.263 1.987c-3.837-3.707-3.175-9.446.1-12.755 2.42-2.449 6.388-3.448 9.852-1.979l3.72-1.737c-.67-.49-1.53-1.017-2.515-1.387-4.455-1.854-9.789-.931-13.41 2.728-3.483 3.523-4.579 8.94-2.697 13.561 1.405 3.454-.899 5.898-3.22 8.364C1.49 30.2.666 31.074 0 32l10.478-9.466" fill="currentColor"></path>
+                    </svg>
+                </button>
+                <button class="more-button" aria-label="More">
+                    <svg width="18" height="18" viewBox="0 0 24 24">
+                        <path d="M3 12c0-1.1.9-2 2-2s2 .9 2 2-.9 2-2 2-2-.9-2-2zm9 2c1.1 0 2-.9 2-2s-.9-2-2-2-2 .9-2 2 .9 2 2 2zm7 0c1.1 0 2-.9 2-2s-.9-2-2-2-2 .9-2 2 .9 2 2 2z" fill="currentColor"></path>
+                    </svg>
+                </button>
+            </div>
+        </div>
+        
+        <div class="tweet-text">
+            Minister for Courts, <span class="problematic-text" data-annotation="misinformation">
+                Sarah Sackman has argued Sharia courts must be allowed in the UK under the banner of "religious tolerance."
+                <span class="annotation-badge">!</span>
+                <div class="tooltip" id="misinformation-tooltip">
+                    <div class="tooltip-header">
+                        <span class="severity-indicator severity-high"></span>
+                        <svg class="tooltip-icon" viewBox="0 0 24 24">
+                            <path d="M12 2L1 21h22L12 2zm0 3.99L19.53 19H4.47L12 5.99zM11 16h2v2h-2v-2zm0-6h2v4h-2v-4z"/>
+                        </svg>
+                        <span class="tooltip-title">Misinformation</span>
+                    </div>
+                    <div class="tooltip-content">
+                        This claim appears to be false. No evidence found of Sarah Sackman making such statements about Sharia courts.
+                    </div>
+                    <div class="tooltip-stats">
+                        <div class="stat">
+                            <div class="stat-value">95%</div>
+                            <div class="stat-label">False</div>
+                        </div>
+                        <div class="stat">
+                            <div class="stat-value">3</div>
+                            <div class="stat-label">Sources</div>
+                        </div>
+                    </div>
+                    <div class="tooltip-actions">
+                        <button class="tooltip-button secondary" onclick="reportContent()">Report</button>
+                        <button class="tooltip-button primary" onclick="learnMore()">Learn More</button>
+                    </div>
+                </div>
+            </span><br><br>
+            This is <span class="problematic-text" data-annotation="inflammatory">
+                utterly absurd. There is nothing British about it, and such courts should be banned outright.
+                <span class="annotation-badge">!</span>
+                <div class="tooltip" id="inflammatory-tooltip">
+                    <div class="tooltip-header">
+                        <span class="severity-indicator severity-medium"></span>
+                        <svg class="tooltip-icon" viewBox="0 0 24 24">
+                            <path d="M12 2C6.48 2 2 6.48 2 12s4.48 10 10 10 10-4.48 10-10S17.52 2 12 2zm-2 15l-5-5 1.41-1.41L10 14.17l7.59-7.59L19 8l-9 9z"/>
+                        </svg>
+                        <span class="tooltip-title">Inflammatory Language</span>
+                    </div>
+                    <div class="tooltip-content">
+                        Uses strong, divisive language that may incite negative emotions and contribute to polarization.
+                    </div>
+                    <div class="tooltip-stats">
+                        <div class="stat">
+                            <div class="stat-value">High</div>
+                            <div class="stat-label">Emotion</div>
+                        </div>
+                        <div class="stat">
+                            <div class="stat-value">2</div>
+                            <div class="stat-label">Flags</div>
+                        </div>
+                    </div>
+                    <div class="tooltip-actions">
+                        <button class="tooltip-button secondary" onclick="reportContent()">Report</button>
+                        <button class="tooltip-button primary" onclick="learnMore()">Learn More</button>
+                    </div>
+                </div>
+            </span><br><br>
+            This is what <span class="problematic-text" data-annotation="political-attack">
+                Keir Starmer's Labour stands for.
+                <span class="annotation-badge">!</span>
+                <div class="tooltip" id="political-attack-tooltip">
+                    <div class="tooltip-header">
+                        <span class="severity-indicator severity-high"></span>
+                        <svg class="tooltip-icon" viewBox="0 0 24 24">
+                            <path d="M12 2l3.09 6.26L22 9.27l-5 4.87 1.18 6.88L12 17.77l-6.18 3.25L7 14.14 2 9.27l6.91-1.01L12 2z"/>
+                        </svg>
+                        <span class="tooltip-title">Political Attack</span>
+                    </div>
+                    <div class="tooltip-content">
+                        Makes broad, unsubstantiated claims about an entire political party based on disputed information.
+                    </div>
+                    <div class="tooltip-stats">
+                        <div class="stat">
+                            <div class="stat-value">False</div>
+                            <div class="stat-label">Claim</div>
+                        </div>
+                        <div class="stat">
+                            <div class="stat-value">5</div>
+                            <div class="stat-label">Sources</div>
+                        </div>
+                    </div>
+                    <div class="tooltip-actions">
+                        <button class="tooltip-button secondary" onclick="reportContent()">Report</button>
+                        <button class="tooltip-button primary" onclick="learnMore()">Learn More</button>
+                    </div>
+                </div>
+            </span>
+        </div>
+        
+        <div class="tweet-actions">
+            <button class="action-button">
+                <svg class="action-icon" viewBox="0 0 24 24">
+                    <path d="M1.751 10c0-4.42 3.584-8 8.005-8h4.366c4.49 0 8.129 3.64 8.129 8.13 0 2.96-1.607 5.68-4.196 7.11l-8.054 4.46v-3.69h-.067c-4.49.1-8.183-3.51-8.183-8.01zm8.005-6c-3.317 0-6.005 2.69-6.005 6 0 3.37 2.77 6.08 6.138 6.01l.351-.01h1.761v2.3l5.087-2.81c1.951-1.08 3.163-3.13 3.163-5.36 0-3.39-2.744-6.13-6.129-6.13H9.756z"></path>
+                </svg>
+                <span>3K</span>
+            </button>
+            
+            <button class="action-button">
+                <svg class="action-icon" viewBox="0 0 24 24">
+                    <path d="M4.5 3.88l4.432 4.14-1.364 1.46L5.5 7.55V16c0 1.1.896 2 2 2H13v2H7.5c-2.209 0-4-1.79-4-4V7.55L1.432 9.48.068 8.02 4.5 3.88zM16.5 6H11V4h5.5c2.209 0 4 1.79 4 4v8.45l2.068-1.93 1.364 1.46-4.432 4.14-4.432-4.14 1.364-1.46 2.068 1.93V8c0-1.1-.896-2-2-2z"></path>
+                </svg>
+                <span>6.6K</span>
+            </button>
+            
+            <button class="action-button">
+                <svg class="action-icon" viewBox="0 0 24 24">
+                    <path d="M16.697 5.5c-1.222-.06-2.679.51-3.89 2.16l-.805 1.09-.806-1.09C9.984 6.01 8.526 5.44 7.304 5.5c-1.243.07-2.349.78-2.91 1.91-.552 1.12-.633 2.78.479 4.82 1.074 1.97 3.257 4.27 7.129 6.61 3.87-2.34 6.052-4.64 7.126-6.61 1.111-2.04 1.03-3.7.477-4.82-.561-1.13-1.666-1.84-2.908-1.91zm4.187 7.69c-1.351 2.48-4.001 5.12-8.379 7.67l-.503.3-.504-.3c-4.379-2.55-7.029-5.19-8.382-7.67-1.36-2.5-1.41-4.86-.514-6.67.887-1.79 2.647-2.91 4.601-3.01 1.651-.09 3.368.56 4.798 2.01 1.429-1.45 3.146-2.1 4.796-2.01 1.954.1 3.714 1.22 4.601 3.01.896 1.81.846 4.17-.514 6.67z"></path>
+                </svg>
+                <span>25K</span>
+            </button>
+            
+            <button class="action-button">
+                <svg class="action-icon" viewBox="0 0 24 24">
+                    <path d="M8.75 21V3h2v18h-2zM18 21V8.5h2V21h-2zM4 21l.004-10h2L6 21H4zm9.248 0v-7h2v7h-2z"></path>
+                </svg>
+                <span>667K</span>
+            </button>
+            
+            <button class="action-button">
+                <svg class="action-icon" viewBox="0 0 24 24">
+                    <path d="M4 4.5C4 3.12 5.119 2 6.5 2h11C18.881 2 20 3.12 20 4.5v18.44l-8-5.71-8 5.71V4.5zM6.5 4c-.276 0-.5.22-.5.5v14.56l6-4.29 6 4.29V4.5c0-.28-.224-.5-.5-.5h-11z"></path>
+                </svg>
+            </button>
+            
+            <button class="action-button">
+                <svg class="action-icon" viewBox="0 0 24 24">
+                    <path d="M12 2.59l5.7 5.7-1.41 1.42L13 6.41V16h-2V6.41l-3.3 3.3-1.41-1.42L12 2.59zM21 15l-.02 3.51c0 1.38-1.12 2.49-2.5 2.49H5.5C4.11 21 3 19.88 3 18.5V15h2v3.5c0 .28.22.5.5.5h12.98c.28 0 .5-.22.5-.5L19 15h2z"></path>
+                </svg>
+            </button>
+        </div>
+    </div>
+
+    <script>
+        function reportContent() {
+            alert('Content reported. Thank you for helping maintain a healthy discourse.');
+        }
+
+        function learnMore() {
+            alert('Opening detailed fact-check information...');
+        }
+
+        // Tooltip functionality
+        document.querySelectorAll('.problematic-text').forEach(element => {
+            let tooltip = element.querySelector('.tooltip');
+            let timeout;
+
+            element.addEventListener('mouseenter', function() {
+                clearTimeout(timeout);
+                // Hide all other tooltips
+                document.querySelectorAll('.tooltip').forEach(t => t.classList.remove('show'));
+                // Show this tooltip
+                tooltip.classList.add('show');
+            });
+
+            element.addEventListener('mouseleave', function() {
+                timeout = setTimeout(() => {
+                    tooltip.classList.remove('show');
+                }, 100);
+            });
+
+            // Keep tooltip open when hovering over it
+            tooltip.addEventListener('mouseenter', function() {
+                clearTimeout(timeout);
+            });
+
+            tooltip.addEventListener('mouseleave', function() {
+                this.classList.remove('show');
+            });
+        });
+    </script>
+</body>
+</html>
+
