@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>X Tweet Mockup - Blur Annotations - Andrew Tate</title>
+    <title>X Tweet Mockup - Variant 3 (Explain) - Andrew Tate</title>
     <style>
         body {
             font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif;
@@ -74,12 +74,6 @@
             margin-left: 4px;
         }
         
-        .views-count {
-            font-size: 15px;
-            color: #71767b;
-            margin-left: 4px;
-        }
-        
         .tweet-actions {
             display: flex;
             justify-content: space-between;
@@ -120,18 +114,6 @@
             position: relative;
         }
         
-        .subscribe-button {
-            background-color: #0f1419;
-            border: none;
-            color: #fff;
-            cursor: pointer;
-            padding: 8px 16px;
-            border-radius: 20px;
-            font-size: 14px;
-            font-weight: 600;
-            margin-right: 8px;
-        }
-        
         .grok-button {
             background: none;
             border: none;
@@ -157,108 +139,233 @@
             gap: 8px;
         }
 
-        /* Blur annotation styles */
+        /* Explain variant styles */
+        .explanation-banner {
+            background: linear-gradient(135deg, #4a90e2, #6bb6ff);
+            border: 1px solid #1d9bf0;
+            border-radius: 8px;
+            padding: 12px 16px;
+            margin-bottom: 16px;
+            display: flex;
+            align-items: center;
+            gap: 12px;
+            box-shadow: 0 2px 8px rgba(29, 155, 240, 0.2);
+        }
+
+        .explanation-icon {
+            width: 20px;
+            height: 20px;
+            fill: white;
+            flex-shrink: 0;
+        }
+
+        .explanation-content {
+            flex: 1;
+        }
+
+        .explanation-title {
+            color: white;
+            font-weight: 600;
+            font-size: 14px;
+            margin-bottom: 4px;
+        }
+
+        .explanation-message {
+            color: rgba(255, 255, 255, 0.9);
+            font-size: 12px;
+            line-height: 1.4;
+        }
+
         .problematic-text {
             position: relative;
             display: inline;
+            cursor: help;
+            border-bottom: 2px dotted #ff6b6b;
+            color: #ff8e8e;
+            transition: all 0.3s ease;
+            background: rgba(255, 107, 107, 0.1);
+            padding: 2px 4px;
+            border-radius: 3px;
+        }
+
+        .problematic-text:hover {
+            color: #ffaaaa;
+            border-bottom-color: #ffaaaa;
+            background: rgba(255, 107, 107, 0.2);
+        }
+
+        .explanation-tooltip {
+            position: absolute;
+            background: #1a1a1a;
+            border: 2px solid #4a90e2;
+            border-radius: 8px;
+            padding: 16px;
+            width: 600px;
+            z-index: 1000;
+            box-shadow: 0 8px 24px rgba(0, 0, 0, 0.6);
+            opacity: 0;
+            visibility: hidden;
+            /* transform: translateY(-10px); */
+            transition: all 0.3s ease;
+            /* pointer-events: none; */
+        }
+
+        .explanation-tooltip.show {
+            opacity: 1;
+            visibility: visible;
+            transform: translateY(0);
+        }
+
+        .explanation-tooltip::before {
+            content: '';
+            position: absolute;
+            top: 100%;
+            left: 50%;
+            transform: translateX(-50%);
+            border: 8px solid transparent;
+            border-top-color: #4a90e2;
+        }
+
+        .explanation-tooltip::after {
+            content: '';
+            position: absolute;
+            top: 100%;
+            left: 50%;
+            transform: translateX(-50%);
+            border: 6px solid transparent;
+            border-top-color: #1a1a1a;
+            margin-top: -2px;
+        }
+
+        .tooltip-header {
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            margin-bottom: 12px;
+        }
+
+        .tooltip-icon {
+            width: 18px;
+            height: 18px;
+            fill: #4a90e2;
+        }
+
+        .tooltip-title {
+            color: #4a90e2;
+            font-weight: bold;
+            font-size: 13px;
+        }
+
+        .tooltip-content {
+            color: #fff;
+            font-size: 12px;
+            line-height: 1.5;
+            margin-bottom: 12px;
+        }
+
+        .tooltip-explanation {
+            background: rgba(74, 144, 226, 0.1);
+            border-radius: 6px;
+            padding: 8px;
+            margin-bottom: 8px;
+            font-size: 11px;
+            color: #6bb6ff;
+        }
+
+        .tooltip-actions {
+            display: flex;
+            gap: 8px;
+            justify-content: flex-end;
+        }
+
+        .tooltip-button {
+            padding: 6px 12px;
+            border-radius: 6px;
+            border: none;
             cursor: pointer;
+            font-size: 11px;
+            font-weight: 600;
+            transition: all 0.2s;
         }
 
-        .problematic-text.blurred {
-            filter: blur(3px);
-            transition: filter 0.3s ease;
+        .tooltip-button.primary {
+            background: #4a90e2;
+            color: white;
         }
 
-        .problematic-text.blurred:hover {
-            filter: blur(0px);
+        .tooltip-button.primary:hover {
+            background: #6bb6ff;
+        }
+
+        .tooltip-button.secondary {
+            background: transparent;
+            color: #71767b;
+            border: 1px solid #71767b;
+        }
+
+        .tooltip-button.secondary:hover {
+            background: #71767b;
+            color: white;
         }
 
         .annotation-badge {
             position: absolute;
             top: -8px;
             right: -8px;
-            background: #ff4444;
+            background: #4a90e2;
             color: white;
             border-radius: 50%;
-            width: 16px;
-            height: 16px;
+            width: 14px;
+            height: 14px;
             display: flex;
             align-items: center;
             justify-content: center;
-            font-size: 10px;
+            font-size: 9px;
             font-weight: bold;
             z-index: 10;
-            cursor: pointer;
+            cursor: help;
         }
 
-        .annotation-popup {
-            position: absolute;
-            background: #1a1a1a;
-            border: 1px solid #ff4444;
-            border-radius: 8px;
-            padding: 12px;
-            max-width: 300px;
-            margin-left: 100px;
-            z-index: 1000;
-            box-shadow: 0 4px 12px rgba(0, 0, 0, 0.5);
-            display: none;
-        }
-
-        .annotation-popup.show {
-            display: block;
-        }
-
-        .annotation-title {
-            color: #ff4444;
-            font-weight: bold;
-            font-size: 14px;
-            margin-bottom: 8px;
-        }
-
-        .annotation-content {
-            color: #fff;
-            font-size: 13px;
-            line-height: 1.4;
-        }
-
-        .annotation-close {
-            position: absolute;
-            top: 4px;
-            right: 8px;
-            background: none;
-            border: none;
-            color: #71767b;
-            cursor: pointer;
-            font-size: 16px;
-        }
-
-        .warning-banner {
-            background: linear-gradient(90deg, #ff4444, #ff6666);
-            color: white;
-            padding: 8px 12px;
+        .context-info {
+            background: rgba(74, 144, 226, 0.1);
             border-radius: 6px;
-            margin-bottom: 12px;
-            font-size: 13px;
+            padding: 8px;
+            margin-top: 8px;
+            font-size: 11px;
+            color: #6bb6ff;
+        }
+
+        .context-item {
             display: flex;
             align-items: center;
-            gap: 8px;
+            gap: 6px;
+            margin-bottom: 4px;
         }
 
-        .warning-icon {
-            width: 16px;
-            height: 16px;
+        .context-item:last-child {
+            margin-bottom: 0;
+        }
+
+        .context-icon {
+            width: 12px;
+            height: 12px;
             fill: currentColor;
         }
     </style>
 </head>
 <body>
     <div class="tweet-container">
-        <!-- Warning Banner -->
-        <div class="warning-banner">
-            <svg class="warning-icon" viewBox="0 0 24 24">
-                <path d="M12 2L1 21h22L12 2zm0 3.99L19.53 19H4.47L12 5.99zM11 16h2v2h-2v-2zm0-6h2v4h-2v-4z"/>
+        <!-- Explanation Banner -->
+        <div class="explanation-banner">
+            <svg class="explanation-icon" viewBox="0 0 24 24">
+                <path d="M12 2l3.09 6.26L22 9.27l-5 4.87 1.18 6.88L12 17.77l-6.18 3.25L7 14.14 2 9.27l6.91-1.01L12 2z"/>
             </svg>
-            This tweet contains misogynistic and inflammatory content. Hover over highlighted text for details.
+            <div class="explanation-content">
+                <div class="explanation-title">Educational Context</div>
+                <div class="explanation-message">
+                    This content contains harmful language. Hover over highlighted text to learn about the impact and context.
+                </div>
+            </div>
         </div>
 
         <div class="tweet-header">
@@ -277,9 +384,6 @@
                 </div>
             </div>
             <div class="tweet-header-actions">
-                <button class="subscribe-button" aria-label="Subscribe to @Cobratate">
-                    Subscribe
-                </button>
                 <button class="grok-button" aria-label="Grok actions">
                     <svg width="18" height="18" viewBox="0 0 33 32">
                         <path d="M12.745 20.54l10.97-8.19c.539-.4 1.307-.244 1.564.38 1.349 3.288.746 7.241-1.938 9.955-2.683 2.714-6.417 3.31-9.83 1.954l-3.728 1.745c5.347 3.697 11.84 2.782 15.898-1.324 3.219-3.255 4.216-7.692 3.284-11.693l.008.009c-1.351-5.878.332-8.227 3.782-13.031L33 0l-4.54 4.59v-.014L12.743 20.544m-2.263 1.987c-3.837-3.707-3.175-9.446.1-12.755 2.42-2.449 6.388-3.448 9.852-1.979l3.72-1.737c-.67-.49-1.53-1.017-2.515-1.387-4.455-1.854-9.789-.931-13.41 2.728-3.483 3.523-4.579 8.94-2.697 13.561 1.405 3.454-.899 5.898-3.22 8.364C1.49 30.2.666 31.074 0 32l10.478-9.466" fill="currentColor"></path>
@@ -294,53 +398,41 @@
         </div>
         
         <div class="tweet-text">
-            <span class="problematic-text blurred" data-annotation="misogynistic">
-                Stop letting women vote, stop giving women position as judges, stop giving women political appointments.
+            <span class="problematic-text" data-annotation="misogynistic-language">
+                Shut up bitch.
                 <span class="annotation-badge">!</span>
-            </span><br><br>
-            <span class="problematic-text blurred" data-annotation="inflammatory">
-                As soon as only men run government and law, all the problems disappear.
-                <span class="annotation-badge">!</span>
-            </span><br><br>
-            <span class="problematic-text blurred" data-annotation="misogynistic">
-                Women now understand that without male protection theyre nothing but victims. You are not a girl boss.
-                <span class="annotation-badge">!</span>
-            </span><br><br>
-            <span class="problematic-text blurred" data-annotation="inflammatory">
-                There is no such thing.
-                <span class="annotation-badge">!</span>
-            </span><br><br>
-            <span class="problematic-text blurred" data-annotation="inflammatory">
-                Crying for Iryana is a wake up call for females.
-                <span class="annotation-badge">!</span>
-            </span><br><br>
-            <span class="problematic-text blurred" data-annotation="inflammatory">
-                GOOD.
-                <span class="annotation-badge">!</span>
-            </span><br><br>
-            <span class="problematic-text blurred" data-annotation="inflammatory">
-                WOMEN:
-                <span class="annotation-badge">!</span>
-            </span><br><br>
-            <span class="problematic-text blurred" data-annotation="misogynistic">
-                giving you political and societal power is how we ended up here.
-                <span class="annotation-badge">!</span>
-            </span><br><br>
-            <span class="problematic-text blurred" data-annotation="inflammatory">
-                Liberalism is just girl feels.
-                <span class="annotation-badge">!</span>
-            </span><br><br>
-            <span class="problematic-text blurred" data-annotation="misogynistic">
-                If you really care about womens safety, drop all female ego and obey men.
-                <span class="annotation-badge">!</span>
-            </span><br><br>
-            <span class="problematic-text blurred" data-annotation="inflammatory">
-                We built you a safe society, you ruined it with ego, we will build it again.
-                <span class="annotation-badge">!</span>
-            </span><br><br>
-            <span class="problematic-text blurred" data-annotation="inflammatory">
-                Obey.
-                <span class="annotation-badge">!</span>
+                <div class="explanation-tooltip" id="misogynistic-tooltip">
+                    <div class="tooltip-header">
+                        <svg class="tooltip-icon" viewBox="0 0 24 24">
+                            <path d="M12 2L1 21h22L12 2zm0 3.99L19.53 19H4.47L12 5.99zM11 16h2v2h-2v-2zm0-6h2v4h-2v-4z"/>
+                        </svg>
+                        <span class="tooltip-title">Misogynistic Language</span>
+                    </div>
+                    <div class="tooltip-content">
+                        This phrase combines dismissive language ("shut up") with a gendered slur that has historically been used to demean and silence women.
+                    </div>
+                    <div class="tooltip-explanation">
+                        <strong>Why this matters:</strong> Language like this contributes to a culture where women's voices are devalued and their experiences are dismissed. It reinforces harmful gender stereotypes and can make online spaces feel unsafe for women and girls.
+                    </div>
+                        <!-- <div class="context-info">
+                            <div class="context-item">
+                                <svg class="context-icon" viewBox="0 0 24 24">
+                                    <path d="M12 2C6.48 2 2 6.48 2 12s4.48 10 10 10 10-4.48 10-10S17.52 2 12 2zm-2 15l-5-5 1.41-1.41L10 14.17l7.59-7.59L19 8l-9 9z"/>
+                                </svg>
+                                <span>Studies show such language correlates with increased harassment</span>
+                            </div>
+                            <div class="context-item">
+                                <svg class="context-icon" viewBox="0 0 24 24">
+                                    <path d="M12 2l3.09 6.26L22 9.27l-5 4.87 1.18 6.88L12 17.77l-6.18 3.25L7 14.14 2 9.27l6.91-1.01L12 2z"/>
+                                </svg>
+                                <span>Creates hostile environment for women online</span>
+                            </div>
+                        </div> -->
+                    <div class="tooltip-actions">
+                        <button class="tooltip-button secondary" onclick="reportContent()">Report</button>
+                        <button class="tooltip-button primary" onclick="learnMore()">Learn More</button>
+                    </div>
+                </div>
             </span>
         </div>
         
@@ -368,15 +460,9 @@
             
             <button class="action-button">
                 <svg class="action-icon" viewBox="0 0 24 24">
-                    <path d="M8.75 21V3h2v18h-2zM18 21V8.5h2V21h-2zM4 21l.004-10h2L6 21H4zm9.248 0v-7h2v7h-2z"></path>
-                </svg>
-                <span>1.9K</span>
-            </button>
-            
-            <button class="action-button">
-                <svg class="action-icon" viewBox="0 0 24 24">
                     <path d="M4 4.5C4 3.12 5.119 2 6.5 2h11C18.881 2 20 3.12 20 4.5v18.44l-8-5.71-8 5.71V4.5zM6.5 4c-.276 0-.5.22-.5.5v14.56l6-4.29 6 4.29V4.5c0-.28-.224-.5-.5-.5h-11z"></path>
                 </svg>
+                <span>1.9K</span>
             </button>
             
             <button class="action-button">
@@ -385,53 +471,45 @@
                 </svg>
             </button>
         </div>
-
-        <!-- Annotation Popups -->
-        <div class="annotation-popup" id="misogynistic-popup">
-            <button class="annotation-close">&times;</button>
-            <div class="annotation-title">⚠️ Misogynistic Content</div>
-            <div class="annotation-content">
-                This content promotes harmful stereotypes about women and advocates for 
-                removing women's rights and political participation.
-            </div>
-        </div>
-
-        <div class="annotation-popup" id="inflammatory-popup">
-            <button class="annotation-close">&times;</button>
-            <div class="annotation-title">🔥 Inflammatory Language</div>
-            <div class="annotation-content">
-                This language uses strong, divisive terms that may incite negative emotions 
-                and contribute to polarization rather than constructive dialogue.
-            </div>
-        </div>
     </div>
 
     <script>
-        // Simple interaction for demonstration
-        document.querySelectorAll('.problematic-text').forEach(element => {
-            element.addEventListener('click', function() {
-                const annotation = this.dataset.annotation;
-                const popup = document.getElementById(annotation + '-popup');
-                
-                // Hide all popups first
-                document.querySelectorAll('.annotation-popup').forEach(p => p.classList.remove('show'));
-                
-                // Show the relevant popup
-                if (popup) {
-                    popup.classList.add('show');
-                    popup.style.top = this.offsetTop + 'px';
-                    popup.style.left = this.offsetLeft + 'px';
-                }
-            });
-        });
+        function reportContent() {
+            alert('Content reported. Thank you for helping maintain a healthy discourse.');
+        }
 
-        // Close popups when clicking close button
-        document.querySelectorAll('.annotation-close').forEach(button => {
-            button.addEventListener('click', function() {
-                this.parentElement.classList.remove('show');
+        function learnMore() {
+            alert('Opening educational resources about online harassment and gender-based violence...');
+        }
+
+        // Tooltip functionality
+        document.querySelectorAll('.problematic-text').forEach(element => {
+            let tooltip = element.querySelector('.explanation-tooltip');
+            let timeout;
+
+            element.addEventListener('mouseenter', function() {
+                clearTimeout(timeout);
+                // Hide all other tooltips
+                document.querySelectorAll('.explanation-tooltip').forEach(t => t.classList.remove('show'));
+                // Show this tooltip
+                tooltip.classList.add('show');
+            });
+
+            element.addEventListener('mouseleave', function() {
+                timeout = setTimeout(() => {
+                    tooltip.classList.remove('show');
+                }, 100);
+            });
+
+            // Keep tooltip open when hovering over it
+            tooltip.addEventListener('mouseenter', function() {
+                clearTimeout(timeout);
+            });
+
+            tooltip.addEventListener('mouseleave', function() {
+                this.classList.remove('show');
             });
         });
     </script>
 </body>
 </html>
-

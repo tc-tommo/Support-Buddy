@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>X Tweet Mockup - Blur Annotations - Andrew Tate</title>
+    <title>X Tweet Mockup - Variant 1 (Blocking) - Andrew Tate</title>
     <style>
         body {
             font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif;
@@ -157,110 +157,199 @@
             gap: 8px;
         }
 
-        /* Blur annotation styles */
-        .problematic-text {
+        .blocked-content.revealed {
+            background: #000;
+        }
+        /* Blocking variant styles */
+        .blocked-content {
             position: relative;
-            display: inline;
-            cursor: pointer;
-        }
-
-        .problematic-text.blurred {
+            background: #000;
+            color: #ddd;
+            padding: 8px;
+            border-radius: 4px;
+            margin: 4px 0;
             filter: blur(3px);
-            transition: filter 0.3s ease;
+            user-select: none;
+            transition: all 0.3s ease;
         }
 
-        .problematic-text.blurred:hover {
-            filter: blur(0px);
-        }
-
-        .annotation-badge {
+        .info-icon-overlay {
             position: absolute;
-            top: -8px;
-            right: -8px;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%);
             background: #ff4444;
             color: white;
             border-radius: 50%;
-            width: 16px;
-            height: 16px;
+            width: 24px;
+            height: 24px;
             display: flex;
             align-items: center;
             justify-content: center;
-            font-size: 10px;
-            font-weight: bold;
-            z-index: 10;
             cursor: pointer;
+            z-index: 10;
+            box-shadow: 0 2px 8px rgba(255, 68, 68, 0.3);
+            transition: all 0.3s ease;
         }
 
-        .annotation-popup {
+        .info-icon-overlay:hover {
+            background: #ff6666;
+            filter: none;
+            transform: translate(-50%, -50%) scale(1.1);
+        }
+
+        .info-icon {
+            width: 14px;
+            height: 14px;
+            fill: currentColor;
+        }
+
+        .blocking-tooltip {
+            margin-bottom: 240px;
+            filter: none;
             position: absolute;
             background: #1a1a1a;
-            border: 1px solid #ff4444;
+            border: 2px solid #ff4444;
             border-radius: 8px;
-            padding: 12px;
-            max-width: 300px;
-            margin-left: 100px;
+            padding: 16px;
+            max-width: 320px;
             z-index: 1000;
-            box-shadow: 0 4px 12px rgba(0, 0, 0, 0.5);
-            display: none;
+            box-shadow: 0 8px 24px rgba(0, 0, 0, 0.6);
+            opacity: 0;
+            visibility: hidden;
+            /* transform: translateY(-10px); */
+            transition: all 0.3s ease;
+            /* pointer-events: none; */
         }
 
-        .annotation-popup.show {
-            display: block;
+        .blocking-tooltip.show {
+            opacity: 1;
+            visibility: visible;
+            transform: translateY(0);
         }
 
-        .annotation-title {
-            color: #ff4444;
-            font-weight: bold;
-            font-size: 14px;
-            margin-bottom: 8px;
+        .blocking-tooltip:hover {
+            opacity: 1;
+            visibility: visible;
+            transform: translateY(0);
         }
 
-        .annotation-content {
-            color: #fff;
-            font-size: 13px;
-            line-height: 1.4;
-        }
-
-        .annotation-close {
+        .blocking-tooltip::before {
+            content: '';
             position: absolute;
-            top: 4px;
-            right: 8px;
-            background: none;
-            border: none;
-            color: #71767b;
-            cursor: pointer;
-            font-size: 16px;
+            top: 100%;
+            left: 50%;
+            transform: translateX(-50%);
+            border: 8px solid transparent;
+            border-top-color: #ff4444;
         }
 
-        .warning-banner {
-            background: linear-gradient(90deg, #ff4444, #ff6666);
-            color: white;
-            padding: 8px 12px;
-            border-radius: 6px;
-            margin-bottom: 12px;
-            font-size: 13px;
+        .blocking-tooltip::after {
+            content: '';
+            position: absolute;
+            top: 100%;
+            left: 50%;
+            transform: translateX(-50%);
+            border: 6px solid transparent;
+            border-top-color: #1a1a1a;
+            margin-top: -2px;
+        }
+
+        .tooltip-header {
             display: flex;
             align-items: center;
             gap: 8px;
+            margin-bottom: 12px;
         }
 
-        .warning-icon {
-            width: 16px;
-            height: 16px;
-            fill: currentColor;
+        .tooltip-icon {
+            width: 20px;
+            height: 20px;
+            fill: #ff4444;
+        }
+
+        .tooltip-title {
+            color: #ff4444;
+            font-weight: bold;
+            font-size: 14px;
+        }
+
+        .tooltip-content {
+            color: #fff;
+            font-size: 13px;
+            line-height: 1.5;
+            margin-bottom: 12px;
+        }
+
+        .tooltip-actions {
+            display: flex;
+            gap: 8px;
+            justify-content: flex-end;
+        }
+
+        .tooltip-button {
+            padding: 6px 12px;
+            border-radius: 6px;
+            border: none;
+            cursor: pointer;
+            font-size: 12px;
+            font-weight: 600;
+            transition: all 0.2s;
+        }
+
+        .tooltip-button.primary {
+            background: #ff4444;
+            color: white;
+        }
+
+        .tooltip-button.primary:hover {
+            background: #ff6666;
+        }
+
+        .tooltip-button.secondary {
+            background: transparent;
+            color: #71767b;
+            border: 1px solid #71767b;
+        }
+
+        .tooltip-button.secondary:hover {
+            background: #71767b;
+            color: white;
+        }
+
+        .reveal-button {
+            background: #ff4444;
+            color: white;
+            border: none;
+            padding: 8px 16px;
+            border-radius: 20px;
+            font-size: 12px;
+            font-weight: 600;
+            cursor: pointer;
+            margin-top: 8px;
+            transition: all 0.2s;
+        }
+
+        .reveal-button:hover {
+            background: #ff6666;
+        }
+
+        .revealed-content {
+            display: none;
+            color: #fff;
+            padding: 8px;
+            background: rgba(255, 68, 68, 0.1);
+            border-radius: 4px;
+            margin: 4px 0;
+        }
+
+        .revealed-content.show {
+            display: block;
         }
     </style>
 </head>
 <body>
     <div class="tweet-container">
-        <!-- Warning Banner -->
-        <div class="warning-banner">
-            <svg class="warning-icon" viewBox="0 0 24 24">
-                <path d="M12 2L1 21h22L12 2zm0 3.99L19.53 19H4.47L12 5.99zM11 16h2v2h-2v-2zm0-6h2v4h-2v-4z"/>
-            </svg>
-            This tweet contains misogynistic and inflammatory content. Hover over highlighted text for details.
-        </div>
-
         <div class="tweet-header">
             <div class="avatar"></div>
             <div class="user-info">
@@ -294,54 +383,42 @@
         </div>
         
         <div class="tweet-text">
-            <span class="problematic-text blurred" data-annotation="misogynistic">
-                Stop letting women vote, stop giving women position as judges, stop giving women political appointments.
-                <span class="annotation-badge">!</span>
-            </span><br><br>
-            <span class="problematic-text blurred" data-annotation="inflammatory">
-                As soon as only men run government and law, all the problems disappear.
-                <span class="annotation-badge">!</span>
-            </span><br><br>
-            <span class="problematic-text blurred" data-annotation="misogynistic">
-                Women now understand that without male protection theyre nothing but victims. You are not a girl boss.
-                <span class="annotation-badge">!</span>
-            </span><br><br>
-            <span class="problematic-text blurred" data-annotation="inflammatory">
-                There is no such thing.
-                <span class="annotation-badge">!</span>
-            </span><br><br>
-            <span class="problematic-text blurred" data-annotation="inflammatory">
-                Crying for Iryana is a wake up call for females.
-                <span class="annotation-badge">!</span>
-            </span><br><br>
-            <span class="problematic-text blurred" data-annotation="inflammatory">
-                GOOD.
-                <span class="annotation-badge">!</span>
-            </span><br><br>
-            <span class="problematic-text blurred" data-annotation="inflammatory">
-                WOMEN:
-                <span class="annotation-badge">!</span>
-            </span><br><br>
-            <span class="problematic-text blurred" data-annotation="misogynistic">
-                giving you political and societal power is how we ended up here.
-                <span class="annotation-badge">!</span>
-            </span><br><br>
-            <span class="problematic-text blurred" data-annotation="inflammatory">
-                Liberalism is just girl feels.
-                <span class="annotation-badge">!</span>
-            </span><br><br>
-            <span class="problematic-text blurred" data-annotation="misogynistic">
-                If you really care about womens safety, drop all female ego and obey men.
-                <span class="annotation-badge">!</span>
-            </span><br><br>
-            <span class="problematic-text blurred" data-annotation="inflammatory">
-                We built you a safe society, you ruined it with ego, we will build it again.
-                <span class="annotation-badge">!</span>
-            </span><br><br>
-            <span class="problematic-text blurred" data-annotation="inflammatory">
+            <div class="blocked-content" id="blocked-content">
+                Stop letting women vote, stop giving women position as judges, stop giving women political appointments.<br><br>
+                As soon as only men run government and law, all the problems disappear.<br><br>
+                Women now understand that without male protection theyre nothing but victims. You are not a girl boss.<br><br>
+                There is no such thing.<br><br>
+                Crying for Iryana is a wake up call for females.<br><br>
+                GOOD.<br><br>
+                WOMEN:<br><br>
+                giving you political and societal power is how we ended up here.<br><br>
+                Liberalism is just girl feels.<br><br>
+                If you really care about womens safety, drop all female ego and obey men.<br><br>
+                We built you a safe society, you ruined it with ego, we will build it again.<br><br>
                 Obey.
-                <span class="annotation-badge">!</span>
-            </span>
+                
+            </div>
+            <div class="info-icon-overlay" id="info-icon">
+                <svg class="info-icon" viewBox="0 0 24 24">
+                    <path d="M12 2C6.48 2 2 6.48 2 12s4.48 10 10 10 10-4.48 10-10S17.52 2 12 2zm1 15h-2v-6h2v6zm0-8h-2V7h2v2z"/>
+                </svg>
+                <div class="blocking-tooltip" id="blocking-tooltip">
+                    <div class="tooltip-header">
+                        <svg class="tooltip-icon" viewBox="0 0 24 24">
+                            <path d="M12 2L1 21h22L12 2zm0 3.99L19.53 19H4.47L12 5.99zM11 16h2v2h-2v-2zm0-6h2v4h-2v-4z"/>
+                        </svg>
+                        <span class="tooltip-title">Content Warning</span>
+                    </div>
+                    <div class="tooltip-content">
+                        This post is likely to contain hate towards women and girls. To see it, click on the information button.
+                    </div>
+                    <div class="tooltip-actions">
+                        <button class="tooltip-button secondary" onclick="reportContent()">Report</button>
+                        <button class="tooltip-button primary" onclick="revealContent()">Show Content</button>
+                    </div>
+                </div>
+            </div>
+
         </div>
         
         <div class="tweet-actions">
@@ -368,15 +445,9 @@
             
             <button class="action-button">
                 <svg class="action-icon" viewBox="0 0 24 24">
-                    <path d="M8.75 21V3h2v18h-2zM18 21V8.5h2V21h-2zM4 21l.004-10h2L6 21H4zm9.248 0v-7h2v7h-2z"></path>
-                </svg>
-                <span>1.9K</span>
-            </button>
-            
-            <button class="action-button">
-                <svg class="action-icon" viewBox="0 0 24 24">
                     <path d="M4 4.5C4 3.12 5.119 2 6.5 2h11C18.881 2 20 3.12 20 4.5v18.44l-8-5.71-8 5.71V4.5zM6.5 4c-.276 0-.5.22-.5.5v14.56l6-4.29 6 4.29V4.5c0-.28-.224-.5-.5-.5h-11z"></path>
                 </svg>
+                <span>1.9K</span>
             </button>
             
             <button class="action-button">
@@ -385,53 +456,39 @@
                 </svg>
             </button>
         </div>
-
-        <!-- Annotation Popups -->
-        <div class="annotation-popup" id="misogynistic-popup">
-            <button class="annotation-close">&times;</button>
-            <div class="annotation-title">⚠️ Misogynistic Content</div>
-            <div class="annotation-content">
-                This content promotes harmful stereotypes about women and advocates for 
-                removing women's rights and political participation.
-            </div>
-        </div>
-
-        <div class="annotation-popup" id="inflammatory-popup">
-            <button class="annotation-close">&times;</button>
-            <div class="annotation-title">🔥 Inflammatory Language</div>
-            <div class="annotation-content">
-                This language uses strong, divisive terms that may incite negative emotions 
-                and contribute to polarization rather than constructive dialogue.
-            </div>
-        </div>
     </div>
 
     <script>
-        // Simple interaction for demonstration
-        document.querySelectorAll('.problematic-text').forEach(element => {
-            element.addEventListener('click', function() {
-                const annotation = this.dataset.annotation;
-                const popup = document.getElementById(annotation + '-popup');
-                
-                // Hide all popups first
-                document.querySelectorAll('.annotation-popup').forEach(p => p.classList.remove('show'));
-                
-                // Show the relevant popup
-                if (popup) {
-                    popup.classList.add('show');
-                    popup.style.top = this.offsetTop + 'px';
-                    popup.style.left = this.offsetLeft + 'px';
-                }
-            });
+        function reportContent() {
+            alert('Content reported. Thank you for helping maintain a healthy discourse.');
+        }
+
+        function revealContent() {
+            // document.getElementById('blocked-content').style.opacity = '0';
+            document.getElementById('blocked-content').style.filter = 'blur(0px)';
+            document.getElementById('blocked-content').style.background = '#2b0b0b';
+            document.getElementById('info-icon').style.display = 'none';
+        }
+
+        // Tooltip functionality
+        const infoIcon = document.getElementById('info-icon');
+        const tooltip = document.getElementById('blocking-tooltip');
+        let timeout;
+
+        infoIcon.addEventListener('mouseenter', function() {
+            clearTimeout(timeout);
+            tooltip.classList.add('show');
         });
 
-        // Close popups when clicking close button
-        document.querySelectorAll('.annotation-close').forEach(button => {
-            button.addEventListener('click', function() {
-                this.parentElement.classList.remove('show');
-            });
+
+        // Keep tooltip open when hovering over it
+        tooltip.addEventListener('mouseenter', function() {
+            clearTimeout(timeout);
+        });
+
+        tooltip.addEventListener('mouseleave', function() {
+            this.classList.remove('show');
         });
     </script>
 </body>
 </html>
-
