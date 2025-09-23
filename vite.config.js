@@ -9,7 +9,7 @@ export default defineConfig({
   build: {
     rollupOptions: {
       input: {
-        background: 'src/background.js',
+        background: 'src/background.ts',
         content: 'src/content.js',
         options: 'src/options.js',
         popup: 'src/popup.js'
