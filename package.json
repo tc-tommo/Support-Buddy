@@ -9,7 +9,7 @@
     "build:firefox": "cross-env TARGET=firefox npm run build",
     "dev": "concurrently \"vite build --watch\"",
     "dev:chrome": "concurrently \"vite build --watch\"",
-    "dev:firefox": "concurrently \"npm run build:firefox --watch\" \"web-ext run --source-dir dist/firefox --firefox=\\\"C:\\\\Program Files\\\\Zen Browser\\\\zen.exe\\\"\""
+    "dev:firefox": "concurrently \"npm run build:firefox --watch\" \"web-ext run --source-dir dist/firefox --firefox=\\\"C:\\\\Program Files\\\\Zen Browser\\\\zen.exe\\\"\" -P dev"
   },
   "devDependencies": {
     "@types/chrome": "^0.0.254",

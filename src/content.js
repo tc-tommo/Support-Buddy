@@ -137,6 +137,14 @@ async function initializeFilter() {
   }
 }
 
+function extractTweetText(tweet) {
+  var text = '';
+  tweet.querySelectorAll('span').forEach(span => {
+    text += span.textContent;
+  });
+  return text;
+}
+
 // Start content filtering based on level
 function startContentFiltering(level) {
   console.log('Starting content filtering with level:', level);
@@ -149,14 +157,12 @@ function startContentFiltering(level) {
         mutation.addedNodes.forEach((node) => {
           if (node.nodeType === Node.ELEMENT_NODE) {
             const articles = node.querySelectorAll('article');
-            const textContents = node.querySelectorAll('div[data-testid="tweetText"] span');
-
+            const textContents = node.querySelectorAll('div[data-testid="tweetText"]').forEach(tweet => {
+              console.log(extractTweetText(tweet));
+            });
+            
             articles.forEach(article => {
               injectBadge(article);
-            });
-
-            textContents.forEach(textContent => {
-              console.log(textContent);
             });
           }
         });
@@ -195,6 +201,7 @@ function injectBadge(article) {
   // Create the Support Buddy badge
   const supportBuddyBadge = document.createElement('div');
   supportBuddyBadge.className = 'support-buddy-badge';
+  supportBuddyBadge.style.display = 'none'; // Initially hidden until classification is complete
   supportBuddyBadge.innerHTML = `
     <svg width="14" height="18" viewBox="0 0 20 20" xmlns="http://www.w3.org/2000/svg" fill="none">
       <path fill="#fff" fill-rule="evenodd" d="M10 3a7 7 0 100 14 7 7 0 000-14zm-9 7a9 9 0 1118 0 9 9 0 01-18 0zm10.01 4a1 1 0 01-1 1H10a1 1 0 110-2h.01a1 1 0 011 1zM11 6a1 1 0 10-2 0v5a1 1 0 102 0V6z"/>
@@ -237,7 +244,23 @@ function injectBadge(article) {
   // Insert the badge before the article node
   article.parentNode.insertBefore(supportBuddyBadge, article);
   
-  console.log('Injected Support Buddy badge after tweet text element');
+  // Classify tweet asynchronously and update badge based on result
+  classifyTweet(extractTweetText(article))
+    .then(classification => {
+      console.log('Classified tweet: ', classification);
+      // Only show badge if tweet is classified as problematic
+      if (classification && classification.toUpperCase().includes('PROBLEMATIC')) {
+        supportBuddyBadge.style.display = 'flex';
+      } else {
+        supportBuddyBadge.style.display = 'none';
+      }
+    })
+    .catch(error => {
+      console.error('Error classifying tweet:', error);
+      // Hide badge on error
+      supportBuddyBadge.style.display = 'none';
+    });
+
 }
 
 // Initialize when DOM is ready
@@ -245,4 +268,23 @@ if (document.readyState === 'loading') {
   document.addEventListener('DOMContentLoaded', initializeFilter);
 } else {
   initializeFilter();
+}
+
+
+
+async function classifyTweet(tweetText) {
+  return new Promise((resolve, reject) => {
+    chrome.runtime.sendMessage({
+      type: 'CLASSIFY_TWEET',
+      tweetText: tweetText
+    }, (response) => {
+      if (chrome.runtime.lastError) {
+        reject(new Error(chrome.runtime.lastError.message));
+      } else if (response && response.success) {
+        resolve(response.classification);
+      } else {
+        reject(new Error(response?.error || 'Classification failed'));
+      }
+    });
+  });
 }

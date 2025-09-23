@@ -17,8 +17,48 @@ let chatHistory: ChatCompletionMessageParam[] = [];
 let isEngineReady = false;
 let isInitializing = false;
 
+// Queue for handling classification requests sequentially
+let classificationQueue: Array<{
+  tweetText: string;
+  tweetId?: string;
+  resolve: (value: any) => void;
+  reject: (error: any) => void;
+}> = [];
+let isProcessingQueue = false;
+
 // Initially selected model
 const selectedModel = "Qwen2-0.5B-Instruct-q4f16_1-MLC";
+
+// Process the classification queue sequentially
+async function processClassificationQueue(): Promise<void> {
+  if (isProcessingQueue || classificationQueue.length === 0) {
+    return;
+  }
+
+  isProcessingQueue = true;
+
+  while (classificationQueue.length > 0) {
+    const request = classificationQueue.shift();
+    if (!request) continue;
+
+    try {
+      const classification = await classifyTweet(request.tweetText);
+      request.resolve({
+        success: true,
+        classification: classification,
+        tweetId: request.tweetId
+      });
+    } catch (error) {
+      request.reject({
+        success: false,
+        error: error instanceof Error ? error.message : 'Classification failed',
+        tweetId: request.tweetId
+      });
+    }
+  }
+
+  isProcessingQueue = false;
+}
 
 // Initialize the ML engine
 async function initializeEngine(): Promise<void> {
@@ -57,7 +97,7 @@ async function classifyTweet(tweetText: string): Promise<string> {
   try {
     // Create classification prompt
     const classificationPrompt = `Classify the following tweet content as benign or problematic. 
-    Respond with one of these categories: BENIGN, PROBLEMATIC.`;
+    Respond with one of these categories: BENIGN, PROBLEMATIC.
     Tweet: "${tweetText}"
     Classification:`;
 
@@ -105,23 +145,30 @@ chrome.runtime.onMessage.addListener((message: any, sender: chrome.runtime.Messa
       return;
     }
 
-    // Ensure engine is ready
-    initializeEngine()
-      .then(() => classifyTweet(tweetText))
-      .then((classification) => {
-        console.log(`Tweet ${tweetId} classified as: ${classification}`);
-        sendResponse({ 
-          success: true, 
-          classification: classification,
-          tweetId: tweetId 
-        });
-      })
-      .catch((error) => {
+    // Add request to queue
+    const queueRequest = {
+      tweetText,
+      tweetId,
+      resolve: (response: any) => {
+        console.log(`Tweet ${tweetId} classified as: ${response.classification}`);
+        sendResponse(response);
+      },
+      reject: (error: any) => {
         console.error("Classification failed:", error);
-        sendResponse({ 
-          success: false, 
+        sendResponse(error);
+      }
+    };
+
+    classificationQueue.push(queueRequest);
+
+    // Ensure engine is ready and process queue
+    initializeEngine()
+      .then(() => processClassificationQueue())
+      .catch((error) => {
+        queueRequest.reject({
+          success: false,
           error: error.message,
-          tweetId: tweetId 
+          tweetId: tweetId
         });
       });
 
